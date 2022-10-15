@@ -17,6 +17,7 @@ from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from datetime import date
 from datetime import timedelta
+from selenium.webdriver.common.by import By
 import time
 import sys
 import os
@@ -74,8 +75,8 @@ class Robot:
             self.browser.save_screenshot(self.rootpath + "/data/debug1.png")
 
         self.logger.log("Logging in...")
-        ele_usr = self.browser.find_element_by_name("username")
-        ele_pwd = self.browser.find_element_by_name("password")
+        ele_usr = self.browser.find_element(By.NAME, "username")#find_element_by_name("username")
+        ele_pwd = self.browser.find_element(By.NAME, "password")#find_element_by_name("password")
         ele_usr.send_keys(self.username)
         #ele_pwd.send_keys(base64.b64decode(self.password).decode('utf-8'))
         ele_pwd.send_keys(self.password)
@@ -83,7 +84,8 @@ class Robot:
         button_found = False
        
         try:
-            self.browser.find_element_by_name("Login").click()
+            # self.browser.find_element(By.NAME, "Login").click()#find_element_by_name("Login").click()
+            self.browser.find_element(By.ID, "clogs-captcha-button").click()#find_element_by_name("Login").click()
             button_found = True
         except Exception as e:
             if self.debug > 1:
@@ -91,7 +93,7 @@ class Robot:
         
         if button_found == False:
             try:
-                self.browser.find_element_by_xpath('//button[@data-action="login"]').click()
+                self.browser.find_element(By.XPATH, '//button[@data-action="login"]').click()#find_element_by_xpath('//button[@data-action="login"]').click()
                 button_found = True
             except Exception as e:
                 if self.debug > 1:
@@ -99,7 +101,7 @@ class Robot:
 
         if button_found == False:
             try:
-                self.browser.find_element_by_xpath('//button[@id="clogs-captcha-button"]').click()
+                self.browser.find_element(By.XPATH, '//button[@id="clogs-captcha-button"]').click()#find_element_by_xpath('//button[@id="clogs-captcha-button"]').click()
                 button_found = True
             except Exception as e:
                 self.logger.log("ERROR: Element by attr id=clogs-captcha-button not found: {e}".format(e=str(e))) 
@@ -170,9 +172,9 @@ class Robot:
     @staticmethod
     def get_host_expiration_days(self, host, iteration):
         try:
-            host_remaining_days = host.find_element_by_xpath(".//a[contains(@class,'no-link-style')]").get_attribute("data-original-title")
+            host_remaining_days = host.find_element(By.XPATH, ".//a[contains(@class,'no-link-style')]").get_attribute("data-original-title")#find_element_by_xpath(".//a[contains(@class,'no-link-style')]").get_attribute("data-original-title")
             if host_remaining_days is None:
-                host_remaining_days = host.find_element_by_xpath(".//a[contains(@class,'no-link-style')]").text
+                host_remaining_days = host.find_element(By.XPATH, ".//a[contains(@class,'no-link-style')]").text#find_element_by_xpath(".//a[contains(@class,'no-link-style')]").text
             if self.debug > 1:
                 self.logger.log("host remaining days found: {days}".format(days=str(host_remaining_days))) 
         except:
@@ -189,16 +191,16 @@ class Robot:
 
     @staticmethod
     def get_host_link(host, iteration):
-        return host.find_element_by_xpath(".//a[@class='link-info cursor-pointer']")
+        return host.find_element(By.XPATH, ".//a[@class='link-info cursor-pointer']")#find_element_by_xpath(".//a[@class='link-info cursor-pointer']")
 
     @staticmethod
     def get_host_button(host, iteration):
-        return host.find_element_by_xpath(".//following-sibling::td[4]/button[contains(@class, 'btn')]")
+        return host.find_element(By.XPATH, ".//following-sibling::td[4]/button[contains(@class, 'btn')]")#find_element_by_xpath(".//following-sibling::td[4]/button[contains(@class, 'btn')]")
 
     def get_hosts(self):
         if self.debug > 1:
             self.logger.log("Getting hosts list...") 
-        host_tds = self.browser.find_elements_by_xpath("//td[@data-title=\"Host\"]")
+        host_tds = self.browser.find_elements(By.XPATH, "//td[@data-title=\"Host\"]")#find_elements_by_xpath("//td[@data-title=\"Host\"]")
         if len(host_tds) == 0:
             raise Exception("No hosts or host table rows not found")
         if self.debug > 1:
